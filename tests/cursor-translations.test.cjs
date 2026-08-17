@@ -56,6 +56,75 @@ test("covers the primary visible copy across every Cursor dashboard route", () =
   }
 });
 
+test("covers the live Cursor Spending page and its plan dialog", () => {
+  const samples = new Map([
+    ["Current Plan", "当前套餐"],
+    ["Current plan", "当前套餐"],
+    ["Usage limits reset on", "用量限制重置于"],
+    ["Cursor Models", "Cursor 模型"],
+    ["· Includes Cursor Grok and Composer", "· 包含 Cursor Grok 和 Composer"],
+    ["1% used", "已使用 1%"],
+    ["Additional usage beyond limits consumes Other Models quota or on-demand spend.", "超出限制的额外用量将消耗其他模型额度或按量付费支出。"],
+    ["Other Models", "其他模型"],
+    ["(31 days left)", "（剩余 31 天）"],
+    ["Weekly usage", "每周用量"],
+    ["On-Demand Spending", "按量付费支出"],
+    ["On-demand spending is currently disabled", "按量付费支出当前已停用"],
+    ["Monthly Limit", "每月限额"],
+    ["Set a fixed amount or make it unlimited.", "设置固定金额或设为不限额。"],
+    ["$200/mo", "$200/月"],
+    ["$40/user/mo.", "$40/用户/月"],
+    ["Adjust your plan", "调整套餐"],
+    ["Monthly", "按月"],
+    ["Annual", "按年"],
+    ["Save 20% when billed annually", "按年计费可节省 20%"],
+    ["Entry-level plan with access to premium models, unlimited Tab completions, and more.", "入门套餐，可使用高级模型、无限 Tab 补全等功能。"],
+    ["Everything in Pro+", "Pro+ 的全部功能"],
+    ["20x usage limits on Agent", "Agent 用量上限提高到 20 倍"],
+    ["Your current plan", "你当前的套餐"],
+    ["Extended limits on Agent", "更高的 Agent 用量上限"],
+    ["Unlimited Tab completions", "无限 Tab 补全"],
+    ["Background Agents", "后台智能体"],
+    ["Maximum context windows", "最大上下文窗口"],
+    ["Downgrade", "降级"],
+    ["Generous limits for Grok & Composer", "更充足的 Grok 与 Composer 用量"],
+    ["Priority access to premium capacity", "优先使用高级容量"],
+    ["Priority access to new features", "优先体验新功能"],
+    ["Highest throughput and limits", "最高吞吐量与用量上限"],
+    ["Cloud agents with shared team context", "具有团队共享上下文的云端智能体"],
+    ["Team-wide rules, skills, and automations", "团队级规则、技能和自动化"],
+    ["Security review agent", "安全审查智能体"],
+    ["Team plugin marketplace", "团队插件市场"],
+    ["Centralized team billing", "集中管理团队账单"],
+    ["Get Teams", "获取 Teams"],
+    ["Need more capabilities for your business? Learn more about our Enterprise plans.", "企业需要更多能力？了解 Enterprise 套餐。"],
+  ]);
+
+  for (const [english, chinese] of samples) {
+    assert.equal(translations.translate(english), chinese, english);
+  }
+});
+
+test("covers Cursor user, appearance, help and spending dropdown menus", () => {
+  const samples = new Map([
+    ["Create Profile", "创建个人资料"],
+    ["Download Cursor macOS", "下载 Cursor macOS"],
+    ["Help", "帮助"],
+    ["Light", "浅色"],
+    ["Dark", "深色"],
+    ["Configure", "配置"],
+    ["Cursor Docs", "Cursor 文档"],
+    ["Get help", "获取帮助"],
+    ["Contact Us", "联系我们"],
+    ["Fixed", "固定金额"],
+    ["Unlimited", "不限额"],
+  ]);
+
+  for (const [english, chinese] of samples) {
+    assert.equal(translations.translate(english), chinese, english);
+  }
+});
+
 test("covers the Cursor Agents and Automations web app", () => {
   const samples = new Map([
     ["New Chat", "新建对话"],

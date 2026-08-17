@@ -1,6 +1,6 @@
 {
   "name": "cc-usage",
-  "version": "1.6.1",
+  "version": "1.6.2",
   "private": true,
   "description": "Claude 中文汉化、Claude/ChatGPT/Codex 用量显示与 Cursor 网页端汉化",
   "license": "MIT",

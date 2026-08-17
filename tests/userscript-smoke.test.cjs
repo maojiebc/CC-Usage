@@ -289,8 +289,12 @@ test("runs on cursor.com/agents, translates live DOM text and does not mount a u
       return null;
     },
   };
+  let cursorObserverCallback;
   const context = {
     MutationObserver: class {
+      constructor(callback) {
+        cursorObserverCallback = callback;
+      }
       observe() {}
     },
     Node: { ELEMENT_NODE: 1, TEXT_NODE: 3 },
@@ -310,4 +314,18 @@ test("runs on cursor.com/agents, translates live DOM text and does not mount a u
   assert.equal(plan.nodeValue, "Ultra");
   assert.equal(date.nodeValue, "2026年8月17日");
   assert.equal(accountName.nodeValue, "Example Workspace");
+
+  const createProfile = textNode("Create Profile");
+  const help = textNode("Help");
+  const fixed = textNode("Fixed");
+  const unlimited = textNode("Unlimited");
+  const popup = element("DIV", [createProfile, help, fixed, unlimited]);
+  popup.parentElement = body;
+  body.childNodes.push(popup);
+  cursorObserverCallback([{ type: "childList", addedNodes: [popup] }]);
+
+  assert.equal(createProfile.nodeValue, "创建个人资料");
+  assert.equal(help.nodeValue, "帮助");
+  assert.equal(fixed.nodeValue, "固定金额");
+  assert.equal(unlimited.nodeValue, "不限额");
 });

@@ -8,7 +8,7 @@
 // @downloadURL  https://raw.githubusercontent.com/maojiebc/CC-Usage/main/claude-chatgpt-usage.user.js
 // @author       jyking (original), maojiebc (maintainer)
 // @copyright    2026, jyking and maojiebc
-// @version      1.6.1
+// @version      1.6.2
 // @description  Claude 中文汉化 + Claude、ChatGPT/Codex 用量显示 + Cursor 网页汉化
 // @icon         https://assets-proxy.anthropic.com/claude-ai/v2/assets/v1/cd02a42d9-Vq_H3mgS.svg
 // @match        https://claude.ai/*
@@ -609,6 +609,63 @@
       "Current billing period": "当前计费周期",
       "Billing period": "计费周期",
       "Plan & Usage": "套餐与用量",
+      "Current Plan": "当前套餐",
+      "Current plan": "当前套餐",
+      "Usage limits reset on": "用量限制重置于",
+      "Cursor Models": "Cursor 模型",
+      "Includes Cursor Grok and Composer": "包含 Cursor Grok 和 Composer",
+      "· Includes Cursor Grok and Composer": "· 包含 Cursor Grok 和 Composer",
+      "Additional usage beyond limits consumes Other Models quota or on-demand spend.":
+        "超出限制的额外用量将消耗其他模型额度或按量付费支出。",
+      "Other Models": "其他模型",
+      "Additional usage beyond limits consumes on-demand spend. Your plan includes at least $400 of Other Models usage.":
+        "超出限制的额外用量将按量计费。你的套餐至少包含 $400 的其他模型用量。",
+      "Weekly usage": "每周用量",
+      Resets: "重置于",
+      "On-Demand Spending": "按量付费支出",
+      "On-demand spending is currently disabled": "按量付费支出当前已停用",
+      "Monthly Limit": "每月限额",
+      "Set a fixed amount or make it unlimited.": "设置固定金额或设为不限额。",
+      Fixed: "固定金额",
+      Unlimited: "不限额",
+      "Create Profile": "创建个人资料",
+      "Download Cursor macOS": "下载 Cursor macOS",
+      Help: "帮助",
+      Light: "浅色",
+      Dark: "深色",
+      Configure: "配置",
+      "Cursor Docs": "Cursor 文档",
+      "Get help": "获取帮助",
+      "Contact Us": "联系我们",
+      "Adjust your plan": "调整套餐",
+      Monthly: "按月",
+      Annual: "按年",
+      "Entry-level plan with access to premium models, unlimited Tab completions, and more.":
+        "入门套餐，可使用高级模型、无限 Tab 补全等功能。",
+      "Extended limits on Agent": "更高的 Agent 用量上限",
+      "Unlimited Tab completions": "无限 Tab 补全",
+      "Background Agents": "后台智能体",
+      "Maximum context windows": "最大上下文窗口",
+      Downgrade: "降级",
+      "Get 3x more usage than Pro and unlock higher limits on Agent and premium models.":
+        "获得 Pro 3 倍用量，并解锁更高的 Agent 和高级模型上限。",
+      "Generous limits for Grok & Composer": "更充足的 Grok 与 Composer 用量",
+      "Priority access to premium capacity": "优先使用高级容量",
+      "Priority access to new features": "优先体验新功能",
+      "Highest throughput and limits": "最高吞吐量与用量上限",
+      "Your current plan": "你当前的套餐",
+      "Everything on Individual, plus:": "包含 Individual 的全部功能，另加：",
+      "Cloud agents with shared team context": "具有团队共享上下文的云端智能体",
+      "Team-wide rules, skills, and automations": "团队级规则、技能和自动化",
+      "Security review agent": "安全审查智能体",
+      "SAML/OIDC SSO + enforced team-level privacy mode":
+        "SAML/OIDC SSO + 强制团队级隐私模式",
+      "Team plugin marketplace": "团队插件市场",
+      "Usage analytics": "用量分析",
+      "Centralized team billing": "集中管理团队账单",
+      "Get Teams": "获取 Teams",
+      "Need more capabilities for your business? Learn more about our Enterprise plans.":
+        "企业需要更多能力？了解 Enterprise 套餐。",
       "Notifications alt+T": "通知 alt+T",
       "Search (⌘K)": "搜索（⌘K）",
       "Getting started": "入门指南",
@@ -1003,6 +1060,28 @@
 
       const includedPlan = text.match(/^Included in (.+)$/i);
       if (includedPlan) return `${includedPlan[1].trim()} 套餐内包含`;
+
+      const monthlyPrice = text.match(/^\$([\d,.]+)\/(mo\.?|user\/mo\.?)$/i);
+      if (monthlyPrice) {
+        return monthlyPrice[2].toLowerCase().startsWith("user")
+          ? `$${monthlyPrice[1]}/用户/月`
+          : `$${monthlyPrice[1]}/月`;
+      }
+
+      const percentUsed = text.match(/^(\d+(?:\.\d+)?)%\s+used$/i);
+      if (percentUsed) return `已使用 ${percentUsed[1]}%`;
+
+      const daysLeft = text.match(/^\(?(\d+)\s+days?\s+left\)?$/i);
+      if (daysLeft) return `（剩余 ${daysLeft[1]} 天）`;
+
+      const annualSaving = text.match(/^Save\s+(\d+(?:\.\d+)?)%\s+when billed annually$/i);
+      if (annualSaving) return `按年计费可节省 ${annualSaving[1]}%`;
+
+      const everythingInPlan = text.match(/^Everything in (.+)$/i);
+      if (everythingInPlan) return `${everythingInPlan[1].trim()} 的全部功能`;
+
+      const usageMultiplier = text.match(/^(\d+)x usage limits on Agent$/i);
+      if (usageMultiplier) return `Agent 用量上限提高到 ${usageMultiplier[1]} 倍`;
 
       const upgradePlan = text.match(/^Upgrade to (.+)$/i);
       if (upgradePlan) return `升级到 ${upgradePlan[1].trim()}`;
