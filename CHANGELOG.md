@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.6.0 - 2026-08-17
+
+- 新增 `cursor.com/dashboard` 网页汉化，覆盖导航、用量、支出、账单、表头、日期范围和动态提示。
+- `Ultra`、`Pro`、`Pro+`、`Teams`、`Enterprise` 等套餐/席位名，以及模型 ID 和产品专有名词保持原文。
+- Cursor 端直接保留官方 Dashboard 用量展示，不复制、改写或推算私有计费接口数据。
+- 限制 Claude/ChatGPT 用量浮窗只在原有两个站点初始化，避免 Cursor 页面误走 Claude provider。
+- 增加显式 `@updateURL` 与 `@downloadURL`，便于 Tampermonkey/Violentmonkey 从 GitHub `main` 检测并安装更新。
+
 ## 1.5.6 - 2026-07-15
 
 - 按原始 `claude-usage-widget-reference.png` 恢复更清透、鲜亮的配色气质。

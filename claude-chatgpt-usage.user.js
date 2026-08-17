@@ -4,13 +4,17 @@
 // @homepageURL  https://github.com/maojiebc/CC-Usage/
 // @supportURL   https://github.com/maojiebc/CC-Usage/issues
 // @source       https://github.com/maojiebc/CC-Usage/
+// @updateURL    https://raw.githubusercontent.com/maojiebc/CC-Usage/main/claude-chatgpt-usage.user.js
+// @downloadURL  https://raw.githubusercontent.com/maojiebc/CC-Usage/main/claude-chatgpt-usage.user.js
 // @author       jyking (original), maojiebc (maintainer)
 // @copyright    2026, jyking and maojiebc
-// @version      1.5.6
-// @description  claude.ai 中文汉化+chatgpt.com额度显示
+// @version      1.6.0
+// @description  Claude 中文汉化 + Claude、ChatGPT/Codex 用量显示 + Cursor 网页汉化
 // @icon         https://assets-proxy.anthropic.com/claude-ai/v2/assets/v1/cd02a42d9-Vq_H3mgS.svg
 // @match        https://claude.ai/*
 // @match        https://chatgpt.com/*
+// @match        https://cursor.com/*
+// @match        https://www.cursor.com/*
 // @require      https://raw.githubusercontent.com/maojiebc/CC-Usage/v1.0.0/claude2cn-design.user.js#sha256=19fefdebcb71584886bfa494aed0e54c4922860f01d9db367e838489ab8afb48
 // @require      https://raw.githubusercontent.com/maojiebc/CC-Usage/v1.0.0/claude2cn-translations.user.js#sha256=587a5de6adf25d5aa19f1e6f58b5bb6181f31e5d89e49669a3c75a85df8ff61a
 // @require      https://raw.githubusercontent.com/maojiebc/CC-Usage/v1.5.2/claude-usage-icons.user.js#sha256=9050bccec82b4413ce99420766796c0d6af2dd34aeafa9e49b38c3e169bbe6f5
@@ -24,6 +28,10 @@
 
   const isClaudeSite = location.hostname === "claude.ai";
   const isChatGPTSite = location.hostname === "chatgpt.com";
+  const isCursorSite =
+    (location.hostname === "cursor.com" ||
+      location.hostname === "www.cursor.com") &&
+    location.pathname.startsWith("/dashboard");
 
   // 添加 CSS 变量
   if (isClaudeSite) {
@@ -507,6 +515,227 @@
     return Object.freeze({ formatResetTime, translate, translateSegments });
   })();
   // END DYNAMIC_TRANSLATIONS
+
+  // BEGIN CURSOR_TRANSLATIONS — Cursor Dashboard 精确词典与动态日期翻译。
+  // 套餐、席位和模型专有名词只作为变量保留，不做中文直译。
+  const CursorTranslations = (() => {
+    const protectedNames = new Set([
+      "Hobby",
+      "Pro",
+      "Pro+",
+      "Pro Plus",
+      "Ultra",
+      "Teams",
+      "Enterprise",
+      "Standard",
+      "Premium",
+      "Business",
+      "Cursor",
+      "Bugbot",
+      "GitHub",
+      "GitLab",
+      "Slack",
+      "Linear",
+      "Jira",
+      "Sentry",
+    ]);
+
+    const phrases = Object.freeze({
+      "Back to Agents": "返回智能体",
+      Overview: "概览",
+      Settings: "设置",
+      "Cloud Agents": "云端智能体",
+      Plugins: "插件",
+      Integrations: "集成",
+      "API Keys": "API 密钥",
+      "Shared Canvases": "共享画布",
+      Members: "成员",
+      Usage: "用量",
+      Spending: "支出",
+      "Billing & Invoices": "账单与发票",
+      "User menu": "用户菜单",
+      Search: "搜索",
+      "Getting Started": "入门指南",
+      Skip: "跳过",
+      Setup: "设置",
+      Connect: "连接",
+      "Source Control": "源代码管理",
+      "Total tokens": "总 Token",
+      Total: "总计",
+      Included: "套餐内",
+      "On-demand": "按量付费",
+      Free: "免费",
+      "Your Usage": "你的用量",
+      "Your usage per day across this billing period":
+        "本计费周期内的每日用量",
+      "Group By: Model": "分组：模型",
+      "Group By: User": "分组：用户",
+      "Group By: Type": "分组：类型",
+      Today: "今天",
+      "Export CSV": "导出 CSV",
+      "Date (UTC)": "日期（UTC）",
+      Type: "类型",
+      Model: "模型",
+      Tokens: "Token",
+      Cost: "费用",
+      "Last 1 day": "最近 1 天",
+      "Last 7 days": "最近 7 天",
+      "Last 30 days": "最近 30 天",
+      "Month-to-date": "本月至今",
+      "Last month": "上个月",
+      "Loading...": "加载中…",
+      Refresh: "刷新",
+      "No results": "暂无结果",
+      "No usage data": "暂无用量数据",
+      "Manage subscription": "管理订阅",
+      "Usage-based pricing": "按量计费",
+      "Enable on-demand spend": "启用按量付费",
+      "Disable on-demand spend": "停用按量付费",
+      "Spend limit": "支出上限",
+      "Current billing period": "当前计费周期",
+      "Billing period": "计费周期",
+      "Plan & Usage": "套餐与用量",
+      Edit: "编辑",
+      "Learn More": "了解更多",
+      "Upload image": "上传图片",
+      Remove: "移除",
+      "Claim handle": "认领用户名",
+      "Add link": "添加链接",
+      Save: "保存",
+      System: "跟随系统",
+      "Cursor Light": "Cursor 浅色",
+      "Cursor Dark": "Cursor 深色",
+      Revoke: "撤销授权",
+      Prev: "上一页",
+      Next: "下一页",
+      "Log Out": "退出登录",
+      Delete: "删除",
+      "Adjust Plan": "调整套餐",
+      Disabled: "已停用",
+      "Manage in Stripe": "前往 Stripe 管理",
+      Item: "项目",
+      Qty: "数量",
+      Download: "下载",
+      Description: "说明",
+      Status: "状态",
+      Amount: "金额",
+      Invoice: "发票",
+      View: "查看",
+      Cancel: "取消",
+    });
+
+    const monthNumbers = Object.freeze({
+      jan: 1,
+      january: 1,
+      feb: 2,
+      february: 2,
+      mar: 3,
+      march: 3,
+      apr: 4,
+      april: 4,
+      may: 5,
+      jun: 6,
+      june: 6,
+      jul: 7,
+      july: 7,
+      aug: 8,
+      august: 8,
+      sep: 9,
+      sept: 9,
+      september: 9,
+      oct: 10,
+      october: 10,
+      nov: 11,
+      november: 11,
+      dec: 12,
+      december: 12,
+    });
+
+    function clock24(hourValue, minuteValue, meridiemValue) {
+      let hour = Number(hourValue);
+      const minute = Number(minuteValue);
+      const meridiem = String(meridiemValue || "").toUpperCase();
+      if (!Number.isFinite(hour) || !Number.isFinite(minute)) return "";
+      if (meridiem === "AM" && hour === 12) hour = 0;
+      if (meridiem === "PM" && hour < 12) hour += 12;
+      return `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+    }
+
+    function translate(value) {
+      const original = String(value || "");
+      const text = original
+        .trim()
+        .replace(/[\u200B-\u200D\u2060\uFEFF]/g, "")
+        .replace(/\u00A0/g, " ")
+        .replace(/[ \t]{2,}/g, " ");
+      if (!text || protectedNames.has(text)) return original;
+
+      if (Object.prototype.hasOwnProperty.call(phrases, text)) {
+        return phrases[text];
+      }
+
+      const includedPlan = text.match(/^Included in (.+)$/i);
+      if (includedPlan) return `${includedPlan[1].trim()} 套餐内包含`;
+
+      const upgradePlan = text.match(/^Upgrade to (.+)$/i);
+      if (upgradePlan) return `升级到 ${upgradePlan[1].trim()}`;
+
+      const currentPlan = text.match(/^(?:Your|Current) plan:\s*(.+)$/i);
+      if (currentPlan) return `当前套餐：${currentPlan[1].trim()}`;
+
+      const namedPlan = text.match(/^(.+?) plan$/i);
+      if (namedPlan && protectedNames.has(namedPlan[1].trim())) {
+        return `${namedPlan[1].trim()} 套餐`;
+      }
+
+      const dateRange = text.match(
+        /^([A-Za-z]+)\s+(\d{1,2})\s*[-–—]\s*([A-Za-z]+)\s+(\d{1,2})$/,
+      );
+      if (dateRange) {
+        const startMonth = monthNumbers[dateRange[1].toLowerCase()];
+        const endMonth = monthNumbers[dateRange[3].toLowerCase()];
+        if (startMonth && endMonth) {
+          return `${startMonth}月${Number(dateRange[2])}日 – ${endMonth}月${Number(dateRange[4])}日`;
+        }
+      }
+
+      const timestamp = text.match(
+        /^([A-Za-z]+)\s+(\d{1,2}),\s+(\d{1,2}):(\d{2})\s+(AM|PM)$/i,
+      );
+      if (timestamp) {
+        const month = monthNumbers[timestamp[1].toLowerCase()];
+        if (month) {
+          return `${month}月${Number(timestamp[2])}日 ${clock24(timestamp[3], timestamp[4], timestamp[5])}`;
+        }
+      }
+
+      const showingUsage = text.match(
+        /^Showing token usage and costs from (.+?) to (.+?)\. Use filters to narrow results by date range\.$/i,
+      );
+      if (showingUsage) {
+        return `显示 ${showingUsage[1]} 至 ${showingUsage[2]} 的 Token 用量与费用。可使用筛选器缩小日期范围。`;
+      }
+
+      const groupBy = text.match(/^Group By:\s*(.+)$/i);
+      if (groupBy) {
+        const labels = { Model: "模型", User: "用户", Type: "类型", Date: "日期" };
+        return `分组：${labels[groupBy[1]] || groupBy[1]}`;
+      }
+
+      const copySection = text.match(
+        /^Copy link to (.+?) and scroll to section$/i,
+      );
+      if (copySection) return `复制“${copySection[1]}”区域链接`;
+
+      const recentDays = text.match(/^Last\s+(\d+)\s+days?$/i);
+      if (recentDays) return `最近 ${recentDays[1]} 天`;
+
+      return original;
+    }
+
+    return Object.freeze({ translate });
+  })();
+  // END CURSOR_TRANSLATIONS
 
   const ClaudeUsageWidget = (() => {
     "use strict";
@@ -2192,7 +2421,7 @@
     };
   })();
 
-  ClaudeUsageWidget.init();
+  if (isClaudeSite || isChatGPTSite) ClaudeUsageWidget.init();
 
   if (isClaudeSite) {
     // 动态首页文案通过 DOM 处理；Design 页面继续兼容打包在 JS bundle 中的静态字符串。
@@ -2364,6 +2593,115 @@
       initClaudeDomTranslator();
     } else {
       document.addEventListener("DOMContentLoaded", initClaudeDomTranslator);
+    }
+  }
+
+  if (isCursorSite) {
+    function shouldSkipCursorTranslation(node) {
+      let element =
+        node.nodeType === Node.ELEMENT_NODE ? node : node.parentElement;
+      while (element) {
+        const tagName = String(element.tagName || "").toUpperCase();
+        if (
+          ["SCRIPT", "STYLE", "TEXTAREA", "INPUT", "CODE", "PRE"].includes(
+            tagName,
+          ) ||
+          element.isContentEditable ||
+          element.getAttribute?.("contenteditable") === "true" ||
+          element.id === "claude-usage-panel-bottom" ||
+          element.hasAttribute?.("data-cc-usage-no-translate")
+        ) {
+          return true;
+        }
+        element = element.parentElement;
+      }
+      return false;
+    }
+
+    function translateCursorTextNode(node) {
+      if (shouldSkipCursorTranslation(node)) return;
+      const raw = node.nodeValue || "";
+      const text = raw.trim();
+      if (!text) return;
+      const translated = CursorTranslations.translate(text);
+      if (translated !== text && translated !== raw) {
+        node.nodeValue = raw.replace(text, translated);
+      }
+    }
+
+    function translateCursorAttrs(element) {
+      if (shouldSkipCursorTranslation(element)) return;
+      for (const attr of [
+        "title",
+        "placeholder",
+        "aria-label",
+        "data-tooltip-content",
+      ]) {
+        const value = element.getAttribute?.(attr);
+        if (!value) continue;
+        const translated = CursorTranslations.translate(value);
+        if (translated !== value) element.setAttribute(attr, translated);
+      }
+    }
+
+    function translateCursorTree(root) {
+      if (!root || shouldSkipCursorTranslation(root)) return;
+      if (root.nodeType === Node.TEXT_NODE) {
+        translateCursorTextNode(root);
+        return;
+      }
+      if (root.nodeType !== Node.ELEMENT_NODE) return;
+
+      translateCursorAttrs(root);
+      const walker = document.createTreeWalker(
+        root,
+        NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT,
+      );
+      let current;
+      while ((current = walker.nextNode())) {
+        if (current.nodeType === Node.TEXT_NODE) {
+          translateCursorTextNode(current);
+        } else {
+          translateCursorAttrs(current);
+        }
+      }
+    }
+
+    const cursorDomObserver = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        if (mutation.type === "characterData") {
+          translateCursorTextNode(mutation.target);
+        } else if (mutation.type === "attributes") {
+          translateCursorAttrs(mutation.target);
+        } else {
+          for (const node of mutation.addedNodes) translateCursorTree(node);
+        }
+      }
+    });
+
+    function initCursorDomTranslator() {
+      if (!document.body) return;
+      translateCursorTree(document.body);
+      cursorDomObserver.observe(document.body, {
+        childList: true,
+        subtree: true,
+        characterData: true,
+        attributes: true,
+        attributeFilter: [
+          "title",
+          "placeholder",
+          "aria-label",
+          "data-tooltip-content",
+        ],
+      });
+    }
+
+    if (document.body) {
+      initCursorDomTranslator();
+    } else {
+      document.addEventListener("DOMContentLoaded", initCursorDomTranslator, {
+        once: true,
+      });
     }
   }
 

@@ -1,6 +1,6 @@
 # CC-Usage
 
-> claude.ai 中文汉化+chatgpt.com额度显示
+> Claude 中文汉化 + Claude、ChatGPT/Codex 用量显示 + Cursor Dashboard 汉化
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Userscript](https://img.shields.io/badge/Tampermonkey-Userscript-black?logo=tampermonkey)](https://raw.githubusercontent.com/maojiebc/CC-Usage/main/claude-chatgpt-usage.user.js)
@@ -17,6 +17,7 @@
 - **状态与设置记忆**：Claude 浮窗支持收起、展开、设置、隐藏四种状态，并记忆自动收起、重置时间与垂直位置设置。
 - **ChatGPT 面板可拖动**：支持桌面端和移动端触控拖动，位置独立保存在 ChatGPT 域名下。
 - **明暗主题适配**：自动跟随页面或系统主题。
+- **Cursor Dashboard 中文汉化**：覆盖 `cursor.com/dashboard` 的导航、用量、支出、账单等常用界面和动态日期；`Ultra`、`Pro`、`Pro+`、`Teams`、`Enterprise` 等套餐名，以及模型 ID、Cursor、Bugbot 等产品名保持原文。
 
 ## 安装
 
@@ -24,7 +25,7 @@
 
 1. 安装 [Tampermonkey](https://www.tampermonkey.net/) 或 [Violentmonkey](https://violentmonkey.github.io/)。
 2. 点击安装：[claude-chatgpt-usage.user.js](https://raw.githubusercontent.com/maojiebc/CC-Usage/main/claude-chatgpt-usage.user.js)。
-3. 刷新 [Claude.ai](https://claude.ai/) 或 [ChatGPT](https://chatgpt.com/)。
+3. 刷新 [Claude.ai](https://claude.ai/)、[ChatGPT](https://chatgpt.com/) 或 [Cursor Dashboard](https://cursor.com/dashboard)。
 
 目前仅通过 GitHub 发布和更新，不在 Greasy Fork 上架。
 
@@ -48,11 +49,20 @@
 
 > 重置卡仅作只读展示，脚本不会替您消耗卡片。ChatGPT 接口中的 Spark 等内部模型计量项不会作为用户额度显示；普通 Chat 对话也不计入此处用量。
 
+### Cursor Dashboard
+
+- 汉化 Dashboard 导航、用量、支出、账单与常用设置文案
+- 汉化日期范围、UTC 时间、用量表头和动态提示
+- 保留 `Hobby`、`Pro`、`Pro+`、`Pro Plus`、`Ultra`、`Teams`、`Enterprise`、`Standard`、`Premium` 等套餐/席位名称
+- 保留模型 ID、Cursor、Bugbot、GitHub、GitLab、Slack 等专有名词
+- 直接展示 Cursor 官方页面的原始用量，不复制、改写或推算其计费数据
+
 ## 隐私与安全
 
-- 脚本只向 `claude.ai`、`chatgpt.com` 及声明的只读 GitHub 资源发起请求。
+- 脚本只在 `claude.ai`、`chatgpt.com`、`cursor.com` 页面运行，并加载声明的只读 GitHub 资源。
 - 额度接口使用浏览器当前登录态，不读取本机 Claude Code 或 Codex 凭据文件。
 - 不上传 Cookie、访问令牌、对话内容或使用统计。
+- Cursor 兼容层只翻译当前页面 DOM，不额外请求或拦截 Cursor 的计费接口。
 - 翻译资源通过固定版本标签和 SHA-256 SRI 校验加载，资源内容变化时浏览器会拒绝执行。
 
 ## 项目结构
