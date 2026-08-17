@@ -8,7 +8,7 @@
 // @downloadURL  https://raw.githubusercontent.com/maojiebc/CC-Usage/main/claude-chatgpt-usage.user.js
 // @author       jyking (original), maojiebc (maintainer)
 // @copyright    2026, jyking and maojiebc
-// @version      1.6.0
+// @version      1.6.1
 // @description  Claude 中文汉化 + Claude、ChatGPT/Codex 用量显示 + Cursor 网页汉化
 // @icon         https://assets-proxy.anthropic.com/claude-ai/v2/assets/v1/cd02a42d9-Vq_H3mgS.svg
 // @match        https://claude.ai/*
@@ -31,7 +31,8 @@
   const isCursorSite =
     (location.hostname === "cursor.com" ||
       location.hostname === "www.cursor.com") &&
-    location.pathname.startsWith("/dashboard");
+    (location.pathname.startsWith("/dashboard") ||
+      location.pathname.startsWith("/agents"));
 
   // 添加 CSS 变量
   if (isClaudeSite) {
@@ -532,12 +533,25 @@
       "Business",
       "Cursor",
       "Bugbot",
+      "Auto",
+      "Marketplace",
+      "Cloud Agent API",
+      "Token",
+      "Highcharts",
       "GitHub",
       "GitLab",
       "Slack",
       "Linear",
       "Jira",
       "Sentry",
+      "Stripe",
+      "API",
+      "SDK",
+      "CLI",
+      "PR",
+      "UTC",
+      "MTD",
+      "Tab",
     ]);
 
     const phrases = Object.freeze({
@@ -595,6 +609,317 @@
       "Current billing period": "当前计费周期",
       "Billing period": "计费周期",
       "Plan & Usage": "套餐与用量",
+      "Notifications alt+T": "通知 alt+T",
+      "Search (⌘K)": "搜索（⌘K）",
+      "Getting started": "入门指南",
+      Completed: "已完成",
+      "Setup progress": "设置进度",
+      "Connect GitHub or GitLab": "连接 GitHub 或 GitLab",
+      "Extend Cursor with plugins": "用插件扩展 Cursor",
+      "Connect Slack": "连接 Slack",
+      "Set up cloud for faster, parallelized agents that verify their work":
+        "配置云端环境，让智能体更快并行运行并验证工作结果",
+      "Set up": "开始设置",
+      "Cloud agents test and send demos of their code and let you ship from your phone, Slack, GitHub, and more.":
+        "云端智能体会测试代码并发送演示，让你可以从手机、Slack、GitHub 等渠道直接交付。",
+      "Loading contribution data...": "正在加载贡献数据…",
+      "Copy section link": "复制区域链接",
+      "AI Line Edits": "AI 行级编辑",
+      All: "全部",
+      Agent: "智能体",
+      "Most Active Month": "最活跃月份",
+      "Most Active Day": "最活跃日期",
+      "Longest Streak": "最长连续记录",
+      "Current Streak": "当前连续记录",
+      Fewer: "较少",
+      "Connect GitHub for Cloud Agents, Bugbot and enhanced codebase context":
+        "连接 GitHub，以使用云端智能体、Bugbot 和增强的代码库上下文",
+      "Connect GitLab for Cloud Agents, Bugbot and enhanced codebase context":
+        "连接 GitLab，以使用云端智能体、Bugbot 和增强的代码库上下文",
+      "Connect Azure DevOps for Cloud Agents, Bugbot and enhanced codebase context":
+        "连接 Azure DevOps，以使用云端智能体、Bugbot 和增强的代码库上下文",
+      "Connect Bitbucket Cloud for Cloud Agents, Bugbot and enhanced codebase context":
+        "连接 Bitbucket Cloud，以使用云端智能体、Bugbot 和增强的代码库上下文",
+      "Ask a team admin to connect an instance": "请团队管理员连接实例",
+      "Team Admin Required": "需要团队管理员权限",
+      "Work with Cloud Agents from Slack": "通过 Slack 使用云端智能体",
+      "Work with Cloud Agents from Microsoft Teams":
+        "通过 Microsoft Teams 使用云端智能体",
+      "Connect a Linear workspace to delegate issues to Cloud Agents":
+        "连接 Linear 工作区，将事项委派给云端智能体",
+      "Connect a Jira site to delegate issues to Cloud Agents":
+        "连接 Jira 站点，将事项委派给云端智能体",
+      "The Jira integration is only available on Teams and Enterprise plans.":
+        "Jira 集成仅适用于 Teams 和 Enterprise 套餐。",
+      "Use Sentry issue events in Automations":
+        "在自动化中使用 Sentry 事项事件",
+      Privacy: "隐私",
+      "Share Data": "共享数据",
+      Active: "已启用",
+      "Your codebase, prompts, edits and other usage data will be stored and trained on by Cursor to improve the product.":
+        "你的代码库、提示词、编辑内容和其他使用数据将由 Cursor 存储并用于训练，以改进产品。",
+      Profile: "个人资料",
+      Email: "电子邮箱",
+      "Profile Image": "头像",
+      "Upload profile image": "上传头像",
+      "PNG, JPEG, or WebP up to 2 MB": "PNG、JPEG 或 WebP，最大 2 MB",
+      "First Name": "名",
+      "First name": "名",
+      "Last Name": "姓",
+      "Last name": "姓",
+      Handle: "用户名",
+      "Profile page links": "个人主页链接",
+      "Link 1": "链接 1",
+      "Public profile": "公开个人主页",
+      "When enabled, your cursor.com profile page is visible to anyone with the link.":
+        "启用后，任何获得链接的人都能查看你的 cursor.com 个人主页。",
+      Appearance: "外观",
+      Theme: "主题",
+      "Light Theme": "浅色主题",
+      "Choose the theme used when your system is in light mode":
+        "选择系统处于浅色模式时使用的主题",
+      "Dark Theme": "深色主题",
+      "Choose the theme used when your system is in dark mode":
+        "选择系统处于深色模式时使用的主题",
+      "Pull Requests": "拉取请求",
+      "Review Provider": "审查服务",
+      "Choose GitHub or Graphite for pull request links on web and desktop":
+        "选择在网页端和桌面端打开拉取请求链接时使用 GitHub 或 Graphite",
+      "Active Sessions": "活跃会话",
+      "Active sessions": "活跃会话",
+      Device: "设备",
+      Created: "创建时间",
+      "Desktop App": "桌面应用",
+      "Mobile App": "移动应用",
+      "Previous page": "上一页",
+      "Next page": "下一页",
+      "Session revocation may take up to 10 minutes to complete.":
+        "撤销会话最多可能需要 10 分钟才能完成。",
+      More: "更多",
+      "Delete Account": "删除账户",
+      "Create Agents to edit and run code, asynchronously":
+        "创建智能体，异步编辑并运行代码",
+      "Run summary": "运行摘要",
+      "All triggers": "全部触发方式",
+      "All statuses": "全部状态",
+      New: "新建",
+      Runs: "运行记录",
+      "Cloud agent runs": "云端智能体运行记录",
+      "No cloud agent runs match these filters.":
+        "没有符合这些筛选条件的云端智能体运行记录。",
+      Environments: "环境",
+      "Loading table data": "正在加载表格数据",
+      Name: "名称",
+      Repositories: "代码仓库",
+      Scope: "范围",
+      Updated: "更新时间",
+      Actions: "操作",
+      "Self-Hosted": "自托管",
+      "Monitor and manage your self-hosted cloud machines":
+        "监控并管理你的自托管云端机器",
+      "Enable Self-Hosted Pool": "启用自托管资源池",
+      "Enable self-hosted pool to create a personal pool of workers.":
+        "启用自托管资源池，创建个人工作节点池。",
+      "Enable Remote Control": "启用远程控制",
+      "Control your local agents remotely from mobile and web.":
+        "通过移动端和网页端远程控制本地智能体。",
+      "My Machines": "我的机器",
+      "View personal self-hosted workers and CLI commands to connect machines.":
+        "查看个人自托管工作节点，以及连接机器所需的 CLI 命令。",
+      Defaults: "默认设置",
+      "Default Model": "默认模型",
+      "Used when no model is specified": "未指定模型时使用",
+      "Select Model": "选择模型",
+      "Default Repository": "默认代码仓库",
+      "Used when no repository is specified": "未指定代码仓库时使用",
+      "Base Branch": "基础分支",
+      "When empty, Cloud Agent will use a repository's default branch (recommended)":
+        "留空时，云端智能体将使用代码仓库的默认分支（推荐）",
+      "Branch name...": "分支名称…",
+      "Branch Prefix": "分支前缀",
+      "Prefix for branch names created by Cloud Agent":
+        "云端智能体创建分支时使用的名称前缀",
+      "Create PRs": "创建 PR",
+      "Automatically create a pull request when Cloud Agent completes.":
+        "云端智能体完成任务后自动创建拉取请求。",
+      "For Single Model Runs": "适用于单模型运行",
+      Notifications: "通知",
+      "Slack Notifications": "Slack 通知",
+      "Get notified in Slack when a Cloud Agent completes a task":
+        "云端智能体完成任务时在 Slack 中接收通知",
+      "Routing Rules": "路由规则",
+      "Routing rules to help Cloud Agents pick the right repository or environment.":
+        "通过路由规则帮助云端智能体选择正确的代码仓库或环境。",
+      "Add Rule": "添加规则",
+      "No Routing Rules Yet": "暂无路由规则",
+      Security: "安全",
+      "Network Access Settings": "网络访问设置",
+      "Control which network destinations your cloud agents can access":
+        "控制云端智能体可以访问哪些网络目标",
+      "Allow All Network Access": "允许访问所有网络",
+      "My Secrets": "我的密钥",
+      "Securely set environment variables for your Cloud Agents.":
+        "为云端智能体安全地设置环境变量。",
+      "Search secrets": "搜索密钥",
+      "Add Secrets": "添加密钥",
+      "No Secrets Yet": "暂无密钥",
+      "Extend Cursor with skills, rules, subagents, MCP tools, and hooks":
+        "使用技能、规则、子智能体、MCP 工具和 Hooks 扩展 Cursor",
+      "Plugin filters": "插件筛选",
+      Required: "必需",
+      Optional: "可选",
+      "Search plugins": "搜索插件",
+      "Search skills, rules, subagents, MCPs, and hooks":
+        "搜索技能、规则、子智能体、MCP 和 Hooks",
+      Add: "添加",
+      "Connect to GitHub — repositories, issues, pull requests, code search, and Actions — via GitHub's official remote MCP server.":
+        "通过 GitHub 官方远程 MCP 服务器连接代码仓库、事项、拉取请求、代码搜索和 Actions。",
+      "Connect external tools to extend your team's workflow.":
+        "连接外部工具，扩展团队工作流。",
+      "Manage API keys and service accounts for programmatic access to Cursor.":
+        "管理 API 密钥和服务账户，以编程方式访问 Cursor。",
+      "SDK docs": "SDK 文档",
+      "TypeScript and Python SDKs for building with Cursor agents.":
+        "用于构建 Cursor 智能体的 TypeScript 和 Python SDK。",
+      "API docs": "API 文档",
+      "Cloud Agent API reference for programmatic access.":
+        "用于程序化访问的 Cloud Agent API 参考文档。",
+      "User API Keys": "用户 API 密钥",
+      "No API Keys Yet": "暂无 API 密钥",
+      "No API Keys have been created yet": "尚未创建 API 密钥",
+      "New API Key": "新建 API 密钥",
+      "User API Keys provide secure, programmatic access to your Cursor account, including the headless version of the Cursor Agent CLI":
+        "用户 API 密钥可为你的 Cursor 账户提供安全的程序化访问，包括无界面的 Cursor Agent CLI",
+      ". Treat them like passwords: keep them secure and never share them publicly.":
+        "。请像对待密码一样妥善保管，切勿公开分享。",
+      "Note: The": "注意：",
+      "is in beta.": "目前处于测试阶段。",
+      "All the Canvases you've shared from Cursor, in one place.":
+        "集中查看你从 Cursor 分享的所有画布。",
+      "No Shared Canvases": "暂无共享画布",
+      "Canvases you share from Cursor will appear here.":
+        "你从 Cursor 分享的画布会显示在这里。",
+      "Work with your team and unlock collaborative features":
+        "与团队协作并解锁协同功能",
+      "Team Management": "团队管理",
+      "Invite members, manage roles, and control access":
+        "邀请成员、管理角色并控制访问权限",
+      "Usage Analytics": "用量分析",
+      "Track team usage and optimize your subscription":
+        "跟踪团队用量并优化订阅",
+      "Admin Controls": "管理员控制",
+      "Centralized billing and privacy mode controls":
+        "集中管理账单和隐私模式",
+      "Rules & Commands": "规则与命令",
+      "Share rules and commands across your team":
+        "在团队内共享规则和命令",
+      "Create team": "创建团队",
+      "Need enterprise features?": "需要企业级功能？",
+      "Get pooled usage, SCIM seat management, and granular admin controls":
+        "获得共享用量池、SCIM 席位管理和精细化管理员控制",
+      "Contact sales": "联系销售",
+      "UTC time range info. Time range is start of day UTC on start date to end of day UTC on end date.":
+        "UTC 时间范围说明：从开始日期的 UTC 当日零点，到结束日期的 UTC 当日结束。",
+      "Time range is start of day UTC on start date to end of day UTC on end date.":
+        "时间范围从开始日期的 UTC 当日零点，到结束日期的 UTC 当日结束。",
+      "Cumulative Tokens": "累计 Token",
+      "Usage Type": "用量类型",
+      default: "默认",
+      "Usage events for all users": "所有用户的用量事件",
+      "Rows: 100": "每页：100 行",
+      "Get maximum value with 20x usage limits and early access to advanced features.":
+        "获得 20 倍用量上限，并优先体验高级功能。",
+      Payment: "付款方式",
+      "Update your payment details": "更新付款信息",
+      "Included Usage": "套餐内用量",
+      "On-Demand Usage": "按量付费用量",
+      Invoices: "发票",
+      "UTC. Invoice dates and the months you can filter and download are in UTC.":
+        "UTC。发票日期以及可筛选、下载的月份均以 UTC 为准。",
+      "Invoice dates and the months you can filter and download are in UTC.":
+        "发票日期以及可筛选、下载的月份均以 UTC 为准。",
+      "We'll be sad to see you go.": "我们会舍不得你离开。",
+      Automations: "自动化",
+      Desktop: "桌面端",
+      "Frontend QA": "前端 QA",
+      Local: "本地",
+      Mobile: "移动端",
+      Subagent: "子智能体",
+      Web: "网页端",
+      Success: "成功",
+      Warning: "警告",
+      Failure: "失败",
+      Running: "运行中",
+      Finished: "已完成",
+      "Install failed": "安装失败",
+      Error: "错误",
+      "Select model": "选择模型",
+      Always: "始终",
+      Never: "从不",
+      "Defaults + My Allowlist": "默认规则 + 我的允许列表",
+      "My Allowlist Only": "仅使用我的允许列表",
+      and: "和",
+      "Cursor home": "Cursor 主页",
+      "Toggle left sidebar": "切换左侧边栏",
+      "Search agents (⌘K)": "搜索智能体（⌘K）",
+      "New Chat": "新建对话",
+      Dashboard: "控制台",
+      Agents: "智能体",
+      "Customize thread list": "自定义对话列表",
+      "No Agents Yet": "暂无智能体",
+      "Loading…": "加载中…",
+      "Ask Cursor to build, fix bugs, explore":
+        "让 Cursor 构建功能、修复问题或探索代码",
+      "Add context and tools": "添加上下文和工具",
+      "Start voice input": "开始语音输入",
+      "Create an Automation": "创建自动化",
+      "Explore Marketplace": "浏览 Marketplace",
+      "Wait for approval after planning": "规划后等待批准",
+      "Running on Auto": "正在使用 Auto 运行",
+      "Usage limits reached. This Agent is running on Auto for free.":
+        "已达到用量上限。此智能体正在免费使用 Auto 运行。",
+      "Edit limits": "编辑上限",
+      "Continue with Auto": "继续使用 Auto",
+      "New Automation": "新建自动化",
+      "Automate repetitive tasks with always-on agents and configure Cursor's built-in agents for your team.":
+        "使用常驻智能体自动处理重复任务，并为团队配置 Cursor 内置智能体。",
+      "From Cursor": "来自 Cursor",
+      "Ship better code, faster": "更快交付更好的代码",
+      "Review Code with Bugbot": "使用 Bugbot 审查代码",
+      "Catch bugs and auto-fix before they ship.":
+        "在发布前发现问题并自动修复。",
+      "Scan and Triage Security Vulnerabilities": "扫描并分级安全漏洞",
+      "Security checks on every change.": "检查每一次变更的安全性。",
+      "Route PR Reviews and Auto-Approve": "分配 PR 审查并自动批准",
+      "Assign reviewers and approve PRs.": "分配审查者并批准 PR。",
+      "Get Started": "开始使用",
+      Dismiss: "关闭",
+      "Automation filters": "自动化筛选",
+      Mine: "我的",
+      Team: "团队",
+      "All Runs": "全部运行记录",
+      "Search...": "搜索…",
+      "No Automations Yet": "暂无自动化",
+      "Automation template filters": "自动化模板筛选",
+      Popular: "热门",
+      "Code Review": "代码审查",
+      "Incidents & Triage": "事件与分级处理",
+      "Data & Research": "数据与研究",
+      Environment: "环境",
+      "Find critical bugs": "查找严重问题",
+      "Analyze recent commits for high-severity correctness bugs and submit safe fixes":
+        "分析近期提交中的高严重性正确性问题，并提交安全修复",
+      Scheduled: "定时运行",
+      "Send Slack": "发送到 Slack",
+      "Scan codebase for vulnerabilities": "扫描代码库漏洞",
+      "Review the full repository on a schedule and alert on validated high-impact security issues":
+        "定期审查整个代码仓库，并针对已确认的高影响安全问题发出提醒",
+      "Generate docs": "生成文档",
+      "Create and update developer documentation for recently changed or under-documented code":
+        "为近期变更或文档不足的代码创建并更新开发者文档",
+      "Add test coverage": "补充测试覆盖",
+      "Review recent changes and add tests for high-risk logic that lacks adequate coverage":
+        "审查近期变更，并为覆盖不足的高风险逻辑补充测试",
       Edit: "编辑",
       "Learn More": "了解更多",
       "Upload image": "上传图片",
@@ -670,6 +995,8 @@
         .replace(/[ \t]{2,}/g, " ");
       if (!text || protectedNames.has(text)) return original;
 
+      if (/^Created with Highcharts\b/i.test(text)) return original;
+
       if (Object.prototype.hasOwnProperty.call(phrases, text)) {
         return phrases[text];
       }
@@ -699,6 +1026,20 @@
         }
       }
 
+      const monthDayYear = text.match(
+        /^([A-Za-z]+)\s+(\d{1,2})(?:,\s*(\d{4}))?$/,
+      );
+      if (monthDayYear) {
+        const month = monthNumbers[monthDayYear[1].toLowerCase()];
+        if (month) {
+          const year = monthDayYear[3] ? `${monthDayYear[3]}年` : "";
+          return `${year}${month}月${Number(monthDayYear[2])}日`;
+        }
+      }
+
+      const monthOnly = monthNumbers[text.toLowerCase()];
+      if (monthOnly) return `${monthOnly}月`;
+
       const timestamp = text.match(
         /^([A-Za-z]+)\s+(\d{1,2}),\s+(\d{1,2}):(\d{2})\s+(AM|PM)$/i,
       );
@@ -706,6 +1047,24 @@
         const month = monthNumbers[timestamp[1].toLowerCase()];
         if (month) {
           return `${month}月${Number(timestamp[2])}日 ${clock24(timestamp[3], timestamp[4], timestamp[5])}`;
+        }
+      }
+
+      const fullUtcTimestamp = text.match(
+        /^([A-Za-z]+)\s+(\d{1,2}),\s+(\d{4}),\s+(\d{1,2}):(\d{2})(?::(\d{2}))?\s+(AM|PM)\s+UTC$/i,
+      );
+      if (fullUtcTimestamp) {
+        const month = monthNumbers[fullUtcTimestamp[1].toLowerCase()];
+        if (month) {
+          const clock = clock24(
+            fullUtcTimestamp[4],
+            fullUtcTimestamp[5],
+            fullUtcTimestamp[7],
+          );
+          const seconds = fullUtcTimestamp[6]
+            ? `:${fullUtcTimestamp[6]}`
+            : "";
+          return `${fullUtcTimestamp[3]}年${month}月${Number(fullUtcTimestamp[2])}日 ${clock}${seconds} UTC`;
         }
       }
 
@@ -725,7 +1084,48 @@
       const copySection = text.match(
         /^Copy link to (.+?) and scroll to section$/i,
       );
-      if (copySection) return `复制“${copySection[1]}”区域链接`;
+      if (copySection) {
+        return `复制“${translate(copySection[1])}”区域链接`;
+      }
+
+      const relativeTime = text.match(
+        /^(?:About\s+)?(\d+)\s+(minute|hour|day|week|month)s?\s+ago$/i,
+      );
+      if (relativeTime) {
+        const units = {
+          minute: "分钟",
+          hour: "小时",
+          day: "天",
+          week: "周",
+          month: "个月",
+        };
+        return `${relativeTime[1]} ${units[relativeTime[2].toLowerCase()]}前`;
+      }
+
+      const pageRange = text.match(/^Showing\s+(\d+)-(\d+)\s+of\s+(\d+)$/i);
+      if (pageRange) {
+        return `显示第 ${pageRange[1]}–${pageRange[2]} 项，共 ${pageRange[3]} 项`;
+      }
+
+      const completedCount = text.match(/^(\d+)\/(\d+)\s+Completed$/i);
+      if (completedCount) {
+        return `已完成 ${completedCount[1]}/${completedCount[2]}`;
+      }
+
+      const dayCount = text.match(/^(\d+)d$/i);
+      if (dayCount) return `${dayCount[1]}天`;
+
+      const runCount = text.match(/^(\d+)\s+runs?$/i);
+      if (runCount) return `${runCount[1]} 次运行`;
+
+      const rows = text.match(/^Rows:\s*(\d+)$/i);
+      if (rows) return `每页：${rows[1]} 行`;
+
+      const cycleStart = text.match(/^Cycle Starting\s+(.+)$/i);
+      if (cycleStart) return `周期开始于 ${translate(cycleStart[1])}`;
+
+      const useTemplate = text.match(/^Use\s+(.+?)\s+template$/i);
+      if (useTemplate) return `使用“${translate(useTemplate[1])}”模板`;
 
       const recentDays = text.match(/^Last\s+(\d+)\s+days?$/i);
       if (recentDays) return `最近 ${recentDays[1]} 天`;

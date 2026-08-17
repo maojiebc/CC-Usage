@@ -17,7 +17,7 @@
 - **状态与设置记忆**：Claude 浮窗支持收起、展开、设置、隐藏四种状态，并记忆自动收起、重置时间与垂直位置设置。
 - **ChatGPT 面板可拖动**：支持桌面端和移动端触控拖动，位置独立保存在 ChatGPT 域名下。
 - **明暗主题适配**：自动跟随页面或系统主题。
-- **Cursor Dashboard 中文汉化**：覆盖 `cursor.com/dashboard` 的导航、用量、支出、账单等常用界面和动态日期；`Ultra`、`Pro`、`Pro+`、`Teams`、`Enterprise` 等套餐名，以及模型 ID、Cursor、Bugbot 等产品名保持原文。
+- **Cursor 网页端中文汉化**：覆盖 `cursor.com/dashboard` 与 `cursor.com/agents` 的控制台、设置、用量、支出、账单、云端智能体、自动化等界面和动态日期；`Ultra`、`Pro`、`Pro+`、`Teams`、`Enterprise` 等套餐名，以及模型 ID、Cursor、Bugbot 等产品名保持原文。
 
 ## 安装
 
@@ -49,9 +49,9 @@
 
 > 重置卡仅作只读展示，脚本不会替您消耗卡片。ChatGPT 接口中的 Spark 等内部模型计量项不会作为用户额度显示；普通 Chat 对话也不计入此处用量。
 
-### Cursor Dashboard
+### Cursor 网页端
 
-- 汉化 Dashboard 导航、用量、支出、账单与常用设置文案
+- 汉化 Dashboard 与 Agents Web App 的导航、用量、支出、账单、云端智能体、自动化与常用设置文案
 - 汉化日期范围、UTC 时间、用量表头和动态提示
 - 保留 `Hobby`、`Pro`、`Pro+`、`Pro Plus`、`Ultra`、`Teams`、`Enterprise`、`Standard`、`Premium` 等套餐/席位名称
 - 保留模型 ID、Cursor、Bugbot、GitHub、GitLab、Slack 等专有名词

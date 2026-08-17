@@ -1,8 +1,8 @@
 {
   "name": "cc-usage",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "private": true,
-  "description": "Claude 中文汉化、Claude/ChatGPT/Codex 用量显示与 Cursor Dashboard 汉化",
+  "description": "Claude 中文汉化、Claude/ChatGPT/Codex 用量显示与 Cursor 网页端汉化",
   "license": "MIT",
   "repository": "github:maojiebc/CC-Usage",
   "scripts": {

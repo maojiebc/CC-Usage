@@ -221,3 +221,93 @@ test("runs on chatgpt.com and mounts the shadow widget without Claude globals", 
   assert.ok(leave, "host should listen for mouseleave");
   leave();
 });
+
+test("runs on cursor.com/agents, translates live DOM text and does not mount a usage widget", () => {
+  const source = fs.readFileSync(
+    path.join(__dirname, "..", "claude-chatgpt-usage.user.js"),
+    "utf8",
+  );
+
+  function textNode(value) {
+    return { nodeType: 3, nodeValue: value, parentElement: null };
+  }
+
+  function element(tagName, children = [], attrs = {}) {
+    const attributes = new Map(Object.entries(attrs));
+    const node = {
+      childNodes: children,
+      getAttribute(name) {
+        return attributes.get(name) ?? null;
+      },
+      hasAttribute(name) {
+        return attributes.has(name);
+      },
+      id: "",
+      isContentEditable: false,
+      nodeType: 1,
+      parentElement: null,
+      setAttribute(name, value) {
+        attributes.set(name, String(value));
+      },
+      tagName,
+    };
+    for (const child of children) child.parentElement = node;
+    return node;
+  }
+
+  const gettingStarted = textNode("Getting started");
+  const connect = textNode("Connect GitHub or GitLab");
+  const plan = textNode("Ultra");
+  const date = textNode("Aug 17, 2026");
+  const accountName = textNode("Example Workspace");
+  const button = element("BUTTON", [connect], {
+    "aria-label": "Search (⌘K)",
+  });
+  const body = element("BODY", [gettingStarted, button, plan, date, accountName]);
+
+  function descendants(root) {
+    const values = [];
+    function visit(node) {
+      for (const child of node.childNodes || []) {
+        values.push(child);
+        visit(child);
+      }
+    }
+    visit(root);
+    return values;
+  }
+
+  const document = {
+    addEventListener() {},
+    body,
+    createTreeWalker(root) {
+      const nodes = descendants(root);
+      let index = 0;
+      return { nextNode: () => nodes[index++] ?? null };
+    },
+    getElementById() {
+      return null;
+    },
+  };
+  const context = {
+    MutationObserver: class {
+      observe() {}
+    },
+    Node: { ELEMENT_NODE: 1, TEXT_NODE: 3 },
+    NodeFilter: { SHOW_ELEMENT: 1, SHOW_TEXT: 4 },
+    Request: class {},
+    console,
+    document,
+    location: { hostname: "cursor.com", pathname: "/agents" },
+    window: { fetch() {} },
+  };
+
+  vm.runInNewContext(source, context);
+
+  assert.equal(gettingStarted.nodeValue, "入门指南");
+  assert.equal(connect.nodeValue, "连接 GitHub 或 GitLab");
+  assert.equal(button.getAttribute("aria-label"), "搜索（⌘K）");
+  assert.equal(plan.nodeValue, "Ultra");
+  assert.equal(date.nodeValue, "2026年8月17日");
+  assert.equal(accountName.nodeValue, "Example Workspace");
+});

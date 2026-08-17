@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.6.1 - 2026-08-17
+
+- 修正 v1.6.0 仅覆盖少量 Dashboard 高频词、实际汉化范围不足的问题。
+- 逐页审计 11 个 Dashboard 路由，补齐设置、云端智能体、插件、集成、API、共享画布、成员、用量、支出与账单的可见文案和辅助属性。
+- 新增 `cursor.com/agents` 与 Automations Web App 汉化，不再只在 `/dashboard` 路径启动翻译。
+- 补齐筛选器、下拉菜单、空状态、分页、运行状态、月份日期、UTC 时间戳、相对时间和计数等动态文案。
+- 保持 `Ultra`、`Pro`、`Pro+`、`Teams`、`Enterprise` 等套餐名，以及 Cursor、Bugbot、Auto、模型 ID 和账户内容原样显示。
+- 增加 Cursor DOM 冒烟测试和跨路由代表性测试；验收清单见 `qa/cursor-localization-audit-v1.6.1.md`。
+
 ## 1.6.0 - 2026-08-17
 
 - 新增 `cursor.com/dashboard` 网页汉化，覆盖导航、用量、支出、账单、表头、日期范围和动态提示。
