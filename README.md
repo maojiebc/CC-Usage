@@ -5,6 +5,10 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Userscript](https://img.shields.io/badge/Tampermonkey-Userscript-black?logo=tampermonkey)](https://raw.githubusercontent.com/maojiebc/CC-Usage/main/claude-chatgpt-usage.user.js)
 
+## [一键安装 CC-Usage](https://raw.githubusercontent.com/maojiebc/CC-Usage/main/claude-chatgpt-usage.user.js)
+
+请先在浏览器中安装 [Tampermonkey（油猴）](https://www.tampermonkey.net/) 或 [Violentmonkey](https://violentmonkey.github.io/)，再点击上方「一键安装 CC-Usage」，在弹出的脚本安装页点击「安装」。
+
 ## 功能
 
 - **Claude.ai 完整中文汉化**：保留原项目 10,000+ 行翻译词条，覆盖 Claude Code、Artifacts、Projects、Cowork、Claude Design 等界面；主脚本内置增补词典，跟进模型选择器、工作量菜单等新 UI 词条。
@@ -24,8 +28,10 @@
 ### Tampermonkey / Violentmonkey
 
 1. 安装 [Tampermonkey](https://www.tampermonkey.net/) 或 [Violentmonkey](https://violentmonkey.github.io/)。
-2. 点击安装：[claude-chatgpt-usage.user.js](https://raw.githubusercontent.com/maojiebc/CC-Usage/main/claude-chatgpt-usage.user.js)。
+2. 点击 [一键安装 CC-Usage](https://raw.githubusercontent.com/maojiebc/CC-Usage/main/claude-chatgpt-usage.user.js)，在脚本安装页点击「安装」。
 3. 刷新 [Claude.ai](https://claude.ai/)、[ChatGPT](https://chatgpt.com/) 或 [Cursor Dashboard](https://cursor.com/dashboard)。
+
+Chrome 使用 Tampermonkey 时，请在地址栏打开 `chrome://extensions`，进入 Tampermonkey 的「详情」并开启「允许用户脚本」。如果没有这个开关，可开启扩展页面右上角的「开发者模式」。详见 [Tampermonkey 官方说明](https://www.tampermonkey.net/faq.php?q=Q209)。
 
 目前仅通过 GitHub 发布和更新，不在 Greasy Fork 上架。
 
