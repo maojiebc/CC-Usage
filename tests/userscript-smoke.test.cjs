@@ -4,7 +4,7 @@ const path = require("node:path");
 const test = require("node:test");
 const vm = require("node:vm");
 
-test("runs on chatgpt.com and mounts the shadow widget without Claude globals", async () => {
+async function mountWidget(hostname) {
   const source = fs.readFileSync(
     path.join(__dirname, "..", "claude-chatgpt-usage.user.js"),
     "utf8",
@@ -95,7 +95,34 @@ test("runs on chatgpt.com and mounts the shadow widget without Claude globals", 
     readyState: "complete",
   };
 
-  async function fetch(url) {
+  const fetchCalls = [];
+  const orgId = "11111111-2222-3333-4444-555555555555";
+  const languageResponse = {
+    ok: true,
+    status: 200,
+    json: async () => ({ greeting: "Morning,", effort: "Default" }),
+  };
+  async function fetch(url, options) {
+    fetchCalls.push({ url, options });
+    if (url.endsWith("/i18n/en-US.json")) return languageResponse;
+    if (url === "https://claude.ai/api/bootstrap") {
+      return {
+        ok: true,
+        status: 200,
+        json: async () => ({ organization: { uuid: orgId } }),
+      };
+    }
+    if (url === `https://claude.ai/api/organizations/${orgId}/usage`) {
+      return {
+        ok: true,
+        status: 200,
+        json: async () => ({
+          five_hour: { utilization: 23, resets_at: "2026-10-10T08:00:00Z" },
+          seven_day: { utilization: 64, resets_at: "2026-10-16T00:00:00Z" },
+          limits: [],
+        }),
+      };
+    }
     if (url === "https://chatgpt.com/api/auth/session") {
       return {
         json: async () => ({ accessToken: "not-a-jwt", accountId: "acct-test" }),
@@ -168,16 +195,20 @@ test("runs on chatgpt.com and mounts the shadow widget without Claude globals", 
     },
   };
   const storage = new Map();
+  const observations = [];
   const context = {
+    XMLHttpRequest: class { open() {} },
     MutationObserver: class {
-      observe() {}
+      observe(target, options) {
+        observations.push({ target, options });
+      }
     },
     Request: class {},
     clearInterval() {},
     clearTimeout() {},
     console,
     document,
-    location: { hostname: "chatgpt.com", pathname: "/" },
+    location: { hostname, pathname: "/" },
     localStorage: {
       getItem(key) {
         return storage.get(key) ?? null;
@@ -195,6 +226,14 @@ test("runs on chatgpt.com and mounts the shadow widget without Claude globals", 
   await new Promise((resolve) => setImmediate(resolve));
   await new Promise((resolve) => setImmediate(resolve));
 
+  return {
+    elements, shadowRoots, window, document,
+    observations, fetchCalls, languageResponse,
+  };
+}
+
+test("runs on chatgpt.com and mounts the shadow widget without translation globals", async () => {
+  const { elements, shadowRoots } = await mountWidget("chatgpt.com");
   const panel = elements.get("claude-usage-panel-bottom");
   assert.ok(panel, "usage panel should be mounted");
   assert.equal(panel.title, "ChatGPT 使用限制");
@@ -222,110 +261,45 @@ test("runs on chatgpt.com and mounts the shadow widget without Claude globals", 
   leave();
 });
 
-test("runs on cursor.com/agents, translates live DOM text and does not mount a usage widget", () => {
-  const source = fs.readFileSync(
-    path.join(__dirname, "..", "claude-chatgpt-usage.user.js"),
-    "utf8",
+test("Claude quota discovery leaves official language responses and page text alone", async () => {
+  const { elements, shadowRoots, window, document, observations, fetchCalls, languageResponse } =
+    await mountWidget("claude.ai");
+  const panel = elements.get("claude-usage-panel-bottom");
+  assert.ok(panel, "Claude usage panel should mount without translation dictionaries");
+  assert.match(shadowRoots[0].innerHTML, /Claude 用量/);
+  assert.ok(
+    fetchCalls.some(({ url }) => url.endsWith("/usage")),
+    "quota discovery should still fetch usage",
   );
 
-  function textNode(value) {
-    return { nodeType: 3, nodeValue: value, parentElement: null };
-  }
+  const options = {
+    credentials: "include",
+    headers: { Accept: "application/json" },
+  };
+  const response = await window.fetch("https://claude.ai/i18n/en-US.json", options);
+  assert.equal(response, languageResponse, "language response should pass through unchanged");
+  assert.equal(fetchCalls.at(-1).options, options, "request options should pass through unchanged");
+  assert.deepEqual(await response.json(), { greeting: "Morning,", effort: "Default" });
 
-  function element(tagName, children = [], attrs = {}) {
-    const attributes = new Map(Object.entries(attrs));
-    const node = {
-      childNodes: children,
-      getAttribute(name) {
-        return attributes.get(name) ?? null;
-      },
-      hasAttribute(name) {
-        return attributes.has(name);
-      },
-      id: "",
-      isContentEditable: false,
-      nodeType: 1,
-      parentElement: null,
-      setAttribute(name, value) {
-        attributes.set(name, String(value));
-      },
-      tagName,
-    };
-    for (const child of children) child.parentElement = node;
-    return node;
-  }
+  assert.equal(observations.length, 1, "only the theme observer should be active");
+  assert.equal(observations[0].target, document.documentElement);
+  assert.equal(observations[0].options.characterData, undefined);
+  assert.equal(observations[0].options.childList, undefined);
+});
 
-  const gettingStarted = textNode("Getting started");
-  const connect = textNode("Connect GitHub or GitLab");
-  const plan = textNode("Ultra");
-  const date = textNode("Aug 17, 2026");
-  const accountName = textNode("Example Workspace");
-  const button = element("BUTTON", [connect], {
-    "aria-label": "Search (⌘K)",
-  });
-  const body = element("BODY", [gettingStarted, button, plan, date, accountName]);
-
-  function descendants(root) {
-    const values = [];
-    function visit(node) {
-      for (const child of node.childNodes || []) {
-        values.push(child);
-        visit(child);
-      }
+test("unsupported sites do not request data, translate pages or create a widget", () => {
+  const source = fs.readFileSync(
+    path.join(__dirname, "..", "claude-chatgpt-usage.user.js"), "utf8",
+  );
+  for (const hostname of ["cursor.com", "www.cursor.com", "example.com"]) {
+    const context = { location: { hostname, pathname: "/agents" } };
+    for (const name of ["document", "window", "MutationObserver"]) {
+      Object.defineProperty(context, name, {
+        get() {
+          throw new Error(`unexpected ${name} access on ${hostname}`);
+        },
+      });
     }
-    visit(root);
-    return values;
+    assert.doesNotThrow(() => vm.runInNewContext(source, context));
   }
-
-  const document = {
-    addEventListener() {},
-    body,
-    createTreeWalker(root) {
-      const nodes = descendants(root);
-      let index = 0;
-      return { nextNode: () => nodes[index++] ?? null };
-    },
-    getElementById() {
-      return null;
-    },
-  };
-  let cursorObserverCallback;
-  const context = {
-    MutationObserver: class {
-      constructor(callback) {
-        cursorObserverCallback = callback;
-      }
-      observe() {}
-    },
-    Node: { ELEMENT_NODE: 1, TEXT_NODE: 3 },
-    NodeFilter: { SHOW_ELEMENT: 1, SHOW_TEXT: 4 },
-    Request: class {},
-    console,
-    document,
-    location: { hostname: "cursor.com", pathname: "/agents" },
-    window: { fetch() {} },
-  };
-
-  vm.runInNewContext(source, context);
-
-  assert.equal(gettingStarted.nodeValue, "入门指南");
-  assert.equal(connect.nodeValue, "连接 GitHub 或 GitLab");
-  assert.equal(button.getAttribute("aria-label"), "搜索（⌘K）");
-  assert.equal(plan.nodeValue, "Ultra");
-  assert.equal(date.nodeValue, "2026年8月17日");
-  assert.equal(accountName.nodeValue, "Example Workspace");
-
-  const createProfile = textNode("Create Profile");
-  const help = textNode("Help");
-  const fixed = textNode("Fixed");
-  const unlimited = textNode("Unlimited");
-  const popup = element("DIV", [createProfile, help, fixed, unlimited]);
-  popup.parentElement = body;
-  body.childNodes.push(popup);
-  cursorObserverCallback([{ type: "childList", addedNodes: [popup] }]);
-
-  assert.equal(createProfile.nodeValue, "创建个人资料");
-  assert.equal(help.nodeValue, "帮助");
-  assert.equal(fixed.nodeValue, "固定金额");
-  assert.equal(unlimited.nodeValue, "不限额");
 });

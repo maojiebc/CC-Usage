@@ -191,9 +191,7 @@
     return realFetch(input, init);
   };
 
-  // ---------- 3. stub @require 词库 + 加载本地图标资产 ----------
-  window.TRANSLATIONS = {};
-  window.DESIGN_TRANSLATIONS = {};
+  // ---------- 3. 加载本地图标资产 ----------
   // v1.4.3 起 Claude 面板图标来自 @require 的资源脚本，本地直接引仓库文件。
   try {
     const iconRes = await realFetch("../../claude-usage-icons.user.js");
